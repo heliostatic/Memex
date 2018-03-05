@@ -116,7 +116,6 @@ function createBundle(
             b
                 .bundle()
                 .on('error', err => {
-                    console.error('ERROR creating bundle', err)
                     console.error(err.stack)
                     // Fail entire gulp build if browserify emits error, but not in dev/watch mode
                     if (!watch) {
@@ -301,7 +300,6 @@ gulp.task(
 )
 
 // Tasks for publishing the extension
-
 gulp.task('publish-extension:chrome', ['package'], () => {
     const extensionID = process.env.WEBSTORE_EXTENSION_ID
     const webStore = ChromeStore({
