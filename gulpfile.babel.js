@@ -116,6 +116,7 @@ function createBundle(
             b
                 .bundle()
                 .on('error', err => {
+                    console.error('ERROR creating bundle', err)
                     console.error(err.stack)
                     // Fail entire gulp build if browserify emits error, but not in dev/watch mode
                     if (!watch) {
