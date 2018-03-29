@@ -50,13 +50,18 @@ export function remoteFunction(funcName, { tabId } = {}) {
         let response
         try {
             response =
-                tabId !== undefined
+                tabId != null
                     ? await browser.tabs.sendMessage(tabId, message)
                     : await browser.runtime.sendMessage(message)
         } catch (err) {
+            const origErrMsg = err.message
+                ? `\nError message: ${err.message}`
+                : ''
+
             throw new Error(
                 `Got no response when trying to call '${funcName}'. ` +
-                    `Did you enable RPC in ${otherSide}?`,
+                    `Did you enable RPC in ${otherSide}?` +
+                    origErrMsg,
             )
         }
 
