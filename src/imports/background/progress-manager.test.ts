@@ -18,7 +18,7 @@ jest.mock('./item-processor')
 jest.mock('./cache')
 jest.mock('./data-sources')
 
-const runSuite = (DATA: TestData) => async () => {
+const runSuite = (DATA: TestData, skip = false) => async () => {
     let stateManager
 
     beforeAll(() => {
@@ -97,9 +97,7 @@ const runSuite = (DATA: TestData) => async () => {
         expect(observer.complete).toHaveBeenCalledTimes(0)
     }
 
-    const testRestartInterruptedProgress = (
-        concurrency: number,
-    ) => async () => {
+    const testRestartedProgress = (concurrency: number) => async () => {
         const observer = { complete: jest.fn(), next: jest.fn() }
         const progress = new Progress({
             stateManager,
@@ -123,24 +121,23 @@ const runSuite = (DATA: TestData) => async () => {
         expect(observer.complete).toHaveBeenCalledTimes(1)
     }
 
+    const runTest = skip ? test.skip : test
+
     // Run some tests at diff concurrency levels
-    test('full progress (1x conc.)', testProgress(1))
-    test('full progress (10x conc)', testProgress(10))
-    test('full progress (20x conc)', testProgress(20))
-    test('interrupted progress (1x conc.)', testInterruptedProgress(1))
-    test('interrupted progress (10x conc)', testInterruptedProgress(10))
-    test('interrupted progress (20x conc)', testInterruptedProgress(20))
-    test(
-        'restart interrupted progress (1x conc)',
-        testRestartInterruptedProgress(1),
-    )
-    test(
+    runTest('full progress (1x conc.)', testProgress(1))
+    runTest('full progress (10x conc)', testProgress(10))
+    runTest('full progress (20x conc)', testProgress(20))
+    runTest('interrupted progress (1x conc.)', testInterruptedProgress(1))
+    runTest('interrupted progress (10x conc)', testInterruptedProgress(10))
+    runTest('interrupted progress (20x conc)', testInterruptedProgress(20))
+    runTest('restart interrupted progress (1x conc)', testRestartedProgress(1))
+    runTest(
         'restart interrupted progress (10x conc)',
-        testRestartInterruptedProgress(10),
+        testRestartedProgress(10),
     )
-    test(
+    runTest(
         'restart interrupted progress (20x conc)',
-        testRestartInterruptedProgress(20),
+        testRestartedProgress(20),
     )
 }
 
@@ -167,4 +164,9 @@ describe(
 describe(
     'Import progress manager (hist: disabled, bm: disabled)',
     runSuite(initData([], [], { h: false, b: false })),
+)
+
+describe(
+    'Import progress manager (hist: 4000+, bm: disabled)',
+    runSuite(initData(urlLists.xlarge, [], { h: true, b: false }), true),
 )
