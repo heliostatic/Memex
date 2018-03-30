@@ -1,4 +1,3 @@
-import fetchPageData from 'src/page-analysis/background/fetch-page-data'
 import { IMPORT_TYPE, DOWNLOAD_STATUS } from 'src/options/imports/constants'
 import * as index from 'src/search'
 
@@ -6,6 +5,19 @@ const fetchPageDataOpts = {
     includePageContent: true,
     includeFavIcon: true,
 }
+
+const fetchPageData = () => ({
+    run: () =>
+        Promise.resolve({
+            content: {
+                fullText:
+                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                lang: 'en',
+                title: 'Lorem Ipsum',
+            },
+        }),
+    cancel: () => Promise.resolve(),
+})
 
 /**
  * TransitionType strings that we care about in the context of the ext.
